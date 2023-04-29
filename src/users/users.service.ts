@@ -46,4 +46,10 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
   }
+
+  async isEmailInUse(email: string) {
+    const count = await this.repo.count({ where: { email } });
+
+    return count >= 1;
+  }
 }
