@@ -14,8 +14,19 @@ export class UsersService {
   }
 
   async findOne(id: number) {
+    if (!id) return null;
+
     try {
       const user = await this.repo.findOneByOrFail({ id });
+      return user;
+    } catch (error) {
+      throw new NotFoundException('User not found');
+    }
+  }
+
+  async findOneByEmail(email: string) {
+    try {
+      const user = await this.repo.findOneByOrFail({ email });
       return user;
     } catch (error) {
       throw new NotFoundException('User not found');

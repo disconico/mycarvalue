@@ -6,6 +6,9 @@ import { UsersModule } from './users/users.module';
 import { ReportsModule } from './reports/reports.module';
 import { User } from './users/user.entity';
 import { Reports } from './reports/reports.entity';
+import { ValidationPipe, MiddlewareConsumer } from '@nestjs/common';
+import { APP_PIPE } from '@nestjs/core';
+import CookieSession from 'cookie-session';
 
 @Module({
   imports: [
@@ -19,6 +22,24 @@ import { Reports } from './reports/reports.entity';
     ReportsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe({
+        whitelist: true,
+      }),
+    },
+  ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(
+        CookieSession({
+          keys: ['asdasdasd'],
+        }),
+      )
+      .forRoutes('*');
+  }
+}

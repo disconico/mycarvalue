@@ -3,19 +3,29 @@ POST http://localhost:3000/auth/signup
 content-type: application/json
 
 {
-    "email": "test@test.com",
+    "email": "abass@ab.fr",
     "password": "test"
 }
 
+### Log a user
+POST http://localhost:3000/auth/signin
+content-type: application/json
+
+{
+    "email": "abass@ab.fr",
+    "password": "test"
+}
+
+
 ### Get single user
-GET http://localhost:3000/auth/1
+GET http://localhost:3000/auth/
 
 ### Find all users with a given email
 GET http://localhost:3000/auth?email=test@test.com
 
 
 ### Delete a user
-DELETE http://localhost:3000/auth/4
+DELETE http://localhost:3000/auth/2
 
 ### Update a user
 PATCH http://localhost:3000/auth/3
@@ -23,5 +33,20 @@ content-type: application/json
 
 {
     "email": "test2@test.com",
-    "password": "test2"
+    "password": "test"
 }
+
+### Sign in
+POST http://localhost:3000/auth/signin
+content-type: application/json
+
+{
+    "email": "ab@a.fr"
+    "password": "test"
+}
+
+### Get current user
+GET http://localhost:3000/auth/whoami
+
+### Sign out
+POST  http://localhost:3000/auth/signout

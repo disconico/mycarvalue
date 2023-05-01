@@ -11,14 +11,20 @@ import {
   HttpCode,
   HttpStatus,
   BadRequestException,
+  Session,
+  UseGuards,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { UserClientDto } from './dtos/user-client.dto';
 import { UsersService } from './users.service';
 import { AuthService } from './auth.service';
-import { Serialize } from 'src/interceptors/serialize.interceptor';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { Serialize } from '../interceptors/serialize.interceptor';
+import { AuthGuard } from '../guards/auth.guard';
 import { QueryFailedError } from 'typeorm';
+import { User } from './user.entity';
 
 @Controller('auth')
 @Serialize(UserClientDto)
@@ -28,11 +34,19 @@ export class UsersController {
     private authService: AuthService,
   ) {}
 
+  @Get('/whoami')
+  @UseGuards(AuthGuard)
+  whoAmI(@CurrentUser() user: User) {
+    return user;
+  }
+
   @Post('/signup')
   @HttpCode(HttpStatus.CREATED)
-  async createUser(@Body() body: CreateUserDto) {
+  async createUser(@Body() body: CreateUserDto, @Session() session: any) {
     try {
-      return this.authService.signup(body.email, body.password);
+      const user = await this.authService.signup(body.email, body.password);
+      session.userId = user.id;
+      return user;
     } catch (error) {
       if (
         error instanceof QueryFailedError &&
@@ -44,11 +58,27 @@ export class UsersController {
     }
   }
 
-  @Get('/:id')
-  findUser(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.findOne(id);
+  @Post('/signin')
+  @HttpCode(HttpStatus.OK)
+  async signin(@Body() body: CreateUserDto, @Session() session: any) {
+    const user = await this.authService.signin(body.email, body.password);
+    session.userId = user.id;
+    return user;
   }
 
+  @Post('/signout')
+  signout(@Session() session: any) {
+    session.userId = null;
+  }
+
+  @Get('/:id')
+  async findUser(@Param('id', ParseIntPipe) id: number) {
+    const user = await this.usersService.findOne(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
   @Get()
   findAllUsers(@Query('email') email: string) {
     return this.usersService.find(email);
