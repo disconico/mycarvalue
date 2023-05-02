@@ -4,5 +4,24 @@ POST http://localhost:3000/reports
 content-type: application/json
 
 {
+    "make": "AAA",
+    "model": "AA",
+    "year": 2012,
+    "mileage": 12345,
+    "price": 10000,
+    "lng": 123.456,
+    "lat": 75.456
+}
 
+### Get all reports
+GET http://localhost:3000/reports
+
+
+
+### Approve an existing report
+PATCH http://localhost:3000/reports/31
+content-type: application/json
+
+{
+    "approved": true
 }

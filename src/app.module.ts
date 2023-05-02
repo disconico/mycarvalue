@@ -38,7 +38,12 @@ import CookieSession from 'cookie-session';
     {
       provide: APP_PIPE,
       useValue: new ValidationPipe({
+        transform: true, // this will ensure we receive the objects on its correct prototype and not a plain object
+        transformOptions: {
+          enableImplicitConversion: true, // this will allow us to remove @Transform decorator on primitive types and Serializable types
+        },
         whitelist: true,
+        stopAtFirstError: true,
       }),
     },
   ],
