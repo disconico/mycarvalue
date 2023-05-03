@@ -1,6 +1,6 @@
 {
   "regions": ["cdg1"],
-  "build": [{ "src": "src/main.ts", "use": "@vercel/node" }],
+  "builds": [{ "src": "src/main.ts", "use": "@vercel/node" }],
   "routes": [
     {
       "src": "/(.*)",
