@@ -1,5 +1,5 @@
 {
-  "region": "cdg-1",
+  "region": ["cdg1"],
   "build": [{ "src": "src/main.ts", "use": "@vercel/node" }],
   "routes": [
     {
